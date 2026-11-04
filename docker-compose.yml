@@ -1,0 +1,55 @@
+services:
+  api:
+    build: .
+    image: medical-triage:local
+    environment:
+      MODEL_DIR: /app/models
+      INFERENCE_ENGINE: onnx
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 10s
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:12.1.1
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+  airflow:
+    image: apache/airflow:3.1.0-python3.12
+    profiles: ["orchestration"]
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      PROJECT_ROOT: /opt/airflow/project
+    volumes:
+      - ./:/opt/airflow/project
+      - ./dags:/opt/airflow/dags
+    ports:
+      - "8080:8080"
+    command: >-
+      bash -c "pip install --user -e /opt/airflow/project && airflow standalone"

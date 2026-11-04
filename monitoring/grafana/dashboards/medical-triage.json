@@ -1,0 +1,62 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "unit": "short"}},
+      "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0},
+      "id": 1,
+      "options": {"colorMode": "value", "graphMode": "area", "textMode": "auto"},
+      "targets": [{"expr": "sum(triage_requests_total)", "legendFormat": "requests", "refId": "A"}],
+      "title": "Total de requisições",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "reqps"}},
+      "gridPos": {"h": 8, "w": 9, "x": 6, "y": 0},
+      "id": 2,
+      "targets": [{"expr": "sum(rate(triage_requests_total[1m])) by (path)", "legendFormat": "{{path}}", "refId": "A"}],
+      "title": "Taxa de requisições",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "s"}},
+      "gridPos": {"h": 8, "w": 9, "x": 15, "y": 0},
+      "id": 3,
+      "targets": [{"expr": "histogram_quantile(0.95, sum(rate(triage_request_latency_seconds_bucket[5m])) by (le, path))", "legendFormat": "p95 {{path}}", "refId": "A"}],
+      "title": "Latência p95",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "reqps"}},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "id": 4,
+      "targets": [{"expr": "sum(rate(triage_requests_total{status=~\"5..\"}[5m]))", "legendFormat": "HTTP 5xx", "refId": "A"}, {"expr": "sum(rate(triage_errors_total[5m]))", "legendFormat": "exceptions", "refId": "B"}],
+      "title": "Taxa de erros",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "short"}},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "id": 5,
+      "targets": [{"expr": "sum(triage_predictions_total) by (urgency)", "legendFormat": "{{urgency}}", "refId": "A"}],
+      "title": "Predições por urgência",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 41,
+  "tags": ["fiap", "nlp", "medical-triage"],
+  "templating": {"list": []},
+  "time": {"from": "now-15m", "to": "now"},
+  "timezone": "browser",
+  "title": "Medical Triage - API Observability",
+  "uid": "medical-triage",
+  "version": 1
+}
