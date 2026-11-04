@@ -1,0 +1,65 @@
+{
+  "dataset": {
+    "rows": 2400,
+    "train_rows": 1920,
+    "test_rows": 480,
+    "source": "deterministic synthetic academic dataset"
+  },
+  "model": {
+    "type": "TF-IDF + LogisticRegression",
+    "classes": [
+      "attention",
+      "normal",
+      "urgent"
+    ],
+    "accuracy": 1.0,
+    "macro_f1": 1.0,
+    "classification_report": {
+      "attention": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 160.0
+      },
+      "normal": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 160.0
+      },
+      "urgent": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 160.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 480.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 480.0
+      }
+    }
+  },
+  "latency": {
+    "batch_size": 128,
+    "baseline_sklearn": {
+      "mean_ms": 0.059827196722229324,
+      "p50_ms": 0.05333311855792999,
+      "p95_ms": 0.0740019371733068
+    },
+    "optimized_onnx": {
+      "mean_ms": 0.012706862762570381,
+      "p50_ms": 0.011458061635494232,
+      "p95_ms": 0.016678799875080582
+    },
+    "speedup": 4.7082586662112735
+  }
+}
